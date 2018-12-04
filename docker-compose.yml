@@ -19,14 +19,14 @@ services:
 
   web:
     container_name: web
-    image: fabiojanio/php-server:7.2-alpine
+    image: fabiojanio/php:7.2-alpine
     volumes:
-      - ./projeto:/var/www
-    working_dir: /var/www
+      - ./projeto:/app
+    working_dir: /app
     depends_on:
       - mariadb
     links:
       - mariadb
     restart: on-failure
     ports:
-      - 80:8080
+      - 80:80
