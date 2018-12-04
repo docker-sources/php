@@ -1,0 +1,32 @@
+version: '3'
+services:
+  mariadb:
+    container_name: mariadb
+    image: fabiojanio/mariadb
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      #- CHARACTER_SET_SERVER=utf8
+      #- COLLATION_SERVER=utf8_unicode_ci
+      #- MYSQL_PORT=3306
+      #- MYSQL_DATABASE= 
+      #- MYSQL_USER=
+      #- MYSQL_PASSWORD=
+    volumes:
+      - ./mysql/tmp:/var/lib/mysql
+    restart: on-failure
+    ports:
+      - 3306:3306
+
+  web:
+    container_name: web
+    image: fabiojanio/php-server:7.2-alpine
+    volumes:
+      - ./projeto:/var/www
+    working_dir: /var/www
+    depends_on:
+      - mariadb
+    links:
+      - mariadb
+    restart: on-failure
+    ports:
+      - 80:8080

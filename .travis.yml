@@ -1,0 +1,32 @@
+language: bash
+services: docker
+
+branches:
+  only:
+  - master
+
+env:
+  global:
+    - VERSION=7.2 VARIANT=alpine
+
+before_script:
+  - env | sort
+  - IMAGE_NAME=fabiojanio/php
+  - IMAGE_FULL_VERSION="${IMAGE_NAME}:${VERSION}-${VARIANT}"
+  - IMAGE_LATEST_VERSION="${IMAGE_NAME}:latest"
+
+script:
+  - docker build -t "${IMAGE_LATEST_VERSION}" .
+  - docker tag "${IMAGE_NAME}" "${IMAGE_FULL_VERSION}"
+
+after_script:
+  - docker images
+
+before_deploy:
+  - echo "${DOCKER_HUB_PASSWORD}" | docker login --username "${DOCKER_HUB_USER}" --password-stdin
+
+deploy:
+  provider: script
+  script: docker push "${IMAGE_LATEST_VERSION}" && docker push "${IMAGE_FULL_VERSION}"
+  on:
+    branch: master
