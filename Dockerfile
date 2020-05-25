@@ -1,4 +1,4 @@
-FROM php:7.2-alpine
+FROM php:7.4-alpine
 
 MAINTAINER Fabio J L Ferreira <fabiojaniolima@gmail.com>
 

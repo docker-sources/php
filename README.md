@@ -1,4 +1,4 @@
-# php:7.2-alpine
+# php:7.4-alpine
 
 <p align="center">
 	<img alt="logo-docker" class="avatar rounded-2" height="150" src="https://avatars2.githubusercontent.com/u/35675959?s=400&u=b1f9ebca6fa8e5be55cb524e16f38b52f2f1dd58&v=4" width="160">
@@ -21,7 +21,7 @@ Consulte a guia [Tags](https://hub.docker.com/r/fabiojanio/php/tags/) no reposit
 
 ## Pacotes presentes na imagem
 
- - PHP 7.2.*
+ - PHP 7.4.*
  - Composer
  - curl
  - unzip
@@ -86,13 +86,13 @@ Lista de módulos ativos presentes na imagem:
 Execute essa instrução para montar um volume compartilhado entre *host* e *container*:
 
 ```
-docker run -v /projeto:/app -d -p 80:80 --name nome_do_container fabiojanio/php:7.2-alpine
+docker run -v /projeto:/app -d -p 80:80 --name nome_do_container fabiojanio/php:7.4-alpine
 ```
 
 **Obs**: no lugar de */projeto* você DEVE informar o caminho absoluto do diretório a ser compartilhado com o container. Caso seu *document root* sejá diferente de `/app`, por exemplo, no Laravel o *document root* tem que apontar para o diretório `public`, neste caso você pode fazer assim:
 
 ```
-docker run -v /projeto:/app -d -p 80:80 --name nome_do_container fabiojanio/php:7.2-alpine php -S 0.0.0.0:80 -t /app/projeto/public
+docker run -v /projeto:/app -d -p 80:80 --name nome_do_container fabiojanio/php:7.4-alpine php -S 0.0.0.0:80 -t /app/projeto/public
 ```
 
 Após a criação do container é possível se conectar a ele desta forma:
