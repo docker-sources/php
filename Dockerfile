@@ -36,11 +36,7 @@ RUN apk add libpng-dev && \
     docker-php-ext-configure soap && docker-php-ext-install soap; \
     \
     # Instala a extensão para cache de bytecode OPcache
-    docker-php-ext-configure opcache && docker-php-ext-install opcache; \
-    \
-    # Biblioteca para lidar com arquivos zip
-    apk add libzip-dev && \
-    docker-php-ext-configure zip && docker-php-ext-install zip
+    docker-php-ext-configure opcache && docker-php-ext-install opcache
 
 # Limpa repositório local
 RUN rm -rf /var/cache/apk/*
