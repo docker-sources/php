@@ -39,7 +39,8 @@ RUN apk add libpng-dev && \
     docker-php-ext-configure opcache && docker-php-ext-install opcache
 
 # Limpa repositório local
-RUN rm -rf /var/cache/apk/*
+RUN apk del libpng-dev icu-dev postgresql-dev libxml2-dev; \
+    rm -rf /var/cache/apk/*
 
 # arquivos de configuração do Apache e PHP
 COPY config/php.ini /usr/local/etc/php
