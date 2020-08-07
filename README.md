@@ -72,6 +72,7 @@ Lista de módulos ativos presentes na imagem:
 - xmlwriter
 - Zend OPcache
 - zlib
+- zip
 
 ## :exclamation: Considerações relevantes
 
