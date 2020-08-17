@@ -11,12 +11,12 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Extensões do PHP
 RUN apk add --no-cache \
         libzip-dev \
-        libpng-dev \
+        freetype-dev \
         icu-dev \
         postgresql-dev \
         libxml2-dev; \
     \
-    docker-php-ext-configure gd; \
+    docker-php-ext-configure gd --with-freetype; \
     docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql; \
     docker-php-ext-configure pdo_pgsql; \
     \
