@@ -22,6 +22,7 @@ Consulte a guia [Tags](https://hub.docker.com/r/fabiojanio/) no repositório des
 
  - PHP 7.4.*
  - Composer
+ - (pacote) hirak/prestissimo
  - curl
  - unzip
 
@@ -79,20 +80,22 @@ Lista de módulos ativos presentes na imagem:
  - Porta **80** exposta
  - **php.ini** enxuto e alocado em `/usr/local/etc/php/php.ini`
 
-**Sugestão**: utilize como exemplo o [**docker-compose.yml**](https://github.com/docker-sources/php/blob/master/docker-compose.yml) para simplificar o start de um ambiente.
+**Sugestão**: utilize como exemplo o [**docker-compose.yml**](https://github.com/docker-sources/php/blob/master/docker-compose.yml) para simplificar o start de um ambiente. Este contêiner utiliza "America/Sao_Paulo" como timezone default.
 
 ## :computer: Iniciar container
 
 Execute essa instrução para montar um volume compartilhado entre *host* e *container*:
 
 ```
-docker run -v /projeto:/app -d -p 80:80 --name nome_do_container fabiojanio/php:7.4-alpine
+docker run --name nome_do_container -v $(pwd):/app -d -p 80:80 fabiojanio/php:7.4-alpine
 ```
 
-**Obs**: no lugar de */projeto* você DEVE informar o caminho absoluto do diretório a ser compartilhado com o container. Caso seu *document root* sejá diferente de `/app`, por exemplo, no Laravel o *document root* tem que apontar para o diretório `public`, neste caso você PODE fazer assim:
+**Obs**: no lugar de */projeto* você DEVE informar o caminho absoluto do diretório a ser compartilhado com o container. Observe que por que utilizei `$(pwd)` para capturar o caminho absoluto até o diretório corrente.
+
+Caso seu *document root* sejá diferente de `/app`, por exemplo, no Laravel o *document root* tem que apontar para o diretório `public`, neste caso você PODE fazer assim:
 
 ```
-docker run -v /projeto:/app -d -p 80:80 --name nome_do_container fabiojanio/php:7.4-alpine php -S 0.0.0.0:80 -t /app/projeto/public
+docker run --name nome_do_container -d -v $(pwd):/app -p 80:80 fabiojanio/php:7.4-alpine php -S 0.0.0.0:80 -t /app/public
 ```
 
 Após a criação do container é possível se conectar a ele desta forma:
@@ -101,24 +104,18 @@ Após a criação do container é possível se conectar a ele desta forma:
 docker exec -it nome_do_container sh
 ```
 
-## :fire: Build (opcional)
+### :bulb: Outros exemplos de uso
 
-Os passos anteriores estão configurados para utilizar a imagem já compilada disponível no **Docker Hub**, entretanto, caso queira compilar sua própria imagem, basta efetuar o download do arquivo [**Dockerfile**](https://github.com/docker-sources/php/blob/master/Dockerfile) e executar a instrução:
-
-```
-docker build -t nome_da_nova_imagem:nome_da_tag .
-```
-
-Posteriormente pode criar o container executando:
+Para subir um container temporário com a finalidade de criar um projeto via Composer, como por exemplo um projeto Laravel, basta executar:
 
 ```
-docker run -v /projeto:/var/www -d -p 80:80 --name nome_do_container nome_da_nova_imagem:nome_da_tag
+docker run --rm -v $(pwd):/app fabiojanio/php:7.4-alpine composer create-project --prefer-dist laravel/laravel blog
 ```
 
-E para conectar ao container executando:
+Neste exemplo, caso queira subir o servidor embutido do PHP via Laravel Artisan, bastaria executar:
 
 ```
-docker exec -it nome_do_container sh
+docker run -d --name nome_do_container -v $(pwd):/app -p 80:8000 fabiojanio/php:7.4-alpine php artisan serve --host=0.0.0.0
 ```
 
 ## :page_with_curl: Licença MIT
