@@ -1,32 +1,50 @@
 version: '3'
+
 services:
-  mariadb:
-    container_name: mariadb
-    image: fabiojanio/mariadb
+  db:
+    container_name: mysql
+    image: mysql:8.0
     environment:
-      - MYSQL_ROOT_PASSWORD=root
-      #- CHARACTER_SET_SERVER=utf8
-      #- COLLATION_SERVER=utf8_unicode_ci
-      #- MYSQL_PORT=3306
-      #- MYSQL_DATABASE= 
-      #- MYSQL_USER=
-      #- MYSQL_PASSWORD=
-    volumes:
-      - ./mysql/tmp:/var/lib/mysql
+      - MYSQL_DATABASE="my_app"
+      - MYSQL_USER="app_user"
+      - MYSQL_PASSWORD="secret-pw"
+      - MYSQL_ROOT_PASSWORD="secret-pw"
     restart: on-failure
+    user: mysql
     ports:
       - 3306:3306
-
-  web:
-    container_name: web
-    image: fabiojanio/php:7.4-alpine
     volumes:
-      - ./projeto:/app
+      - db-data:/var/lib/mysql
+    networks:
+      - db_network
+    healthcheck:
+      test: "mysqladmin -u root -p'$MYSQL_ROOT_PASSWORD' ping -h localhost"
+      interval: 5s
+      retries: 5
+
+  php:
+    container_name: php
+    image: fabiojanio/php:8.0-alpine3.14
+    volumes:
+      - /your/project:/app
+      #- ./config/php.ini:/usr/local/etc/php
     working_dir: /app
-    depends_on:
-      - mariadb
-    links:
-      - mariadb
     restart: on-failure
+    user: www-data
     ports:
-      - 80:80
+      - 8080:80
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - db_network
+    command: >
+      sh -c "php artisan migrate
+      && php artisan serve --host=0.0.0.0 --port=80"
+
+volumes:
+  db-data:
+
+networks:
+  db_network:
+    driver: bridge

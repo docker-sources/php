@@ -1,20 +1,23 @@
-FROM php:7.4-alpine
+FROM php:8.0-cli-alpine3.14
 
-MAINTAINER Fabio J L Ferreira <fabiojaniolima@gmail.com>
+LABEL com.fabiojanio.image.authors.name="Fabio J L Ferreira"
+LABEL com.fabiojanio.image.authors.email="fabiojaniolima@gmail.com"
 
 ##----------------------------------##
 ## Instalações e configurações base ##
 ##----------------------------------##
 
 # Instala o composer e pacote para paralelismo
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer && \
-    composer global require hirak/prestissimo; \
+RUN ln -s /var/www/html /app  && \
+    \
+    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer && \
     \
     # Instala e configura timezone
-    apk add --no-cache tzdata && \
+    apk add --no-cache --virtual .fetch-deps tzdata && \
     cp /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime && \
-    echo "America/Sao_Paulo" > /etc/timezone
-
+    echo "America/Sao_Paulo" > /etc/timezone && \
+    apk del tzdata; \
+    apk del --no-network .fetch-deps
 
 ##------------------##
 ## Extensões do PHP ##
@@ -22,35 +25,18 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 # Dependências para compilação das extensões
 RUN apk add --no-cache \
-        libzip-dev \
         freetype-dev \
-        icu-dev \
-        postgresql-dev \
-        libxml2-dev && \
+        postgresql-dev && \
     \
-    docker-php-ext-configure gd --with-freetype; \
-    docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql; \
-    docker-php-ext-configure pdo_pgsql; \
+    docker-php-ext-configure gd --with-freetype && \
     \
     docker-php-ext-install -j$(nproc) \
-        zip \
         gd \
-        exif \
         intl \
-        mysqli \
+        bcmath \
         pdo_mysql \
-        pgsql \
-        pdo_pgsql \
-        sockets \
-        soap \
-        opcache
+        pdo_pgsql
 
-# Limpa o cache do APK, do Composer e remove os pacotes de timezone
-RUN rm -rf /var/cache/apk/*; \
-    apk del tzdata; \
-    composer cc
-
-# arquivos de configuração do Apache e PHP
 COPY config/php.ini /usr/local/etc/php
 
 WORKDIR /app

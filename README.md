@@ -1,4 +1,4 @@
-# php:7.4-alpine
+# php:8.0-alpine3.14
 
 <p align="center">
 	<img alt="logo-docker" class="avatar rounded-2" height="150" src="https://avatars2.githubusercontent.com/u/35675959?s=400&u=b1f9ebca6fa8e5be55cb524e16f38b52f2f1dd58&v=4" width="160">
@@ -9,20 +9,18 @@
 	</a>
 </p>
 
-Essa imagem **Docker** foi criada de modo a permitir um start simplificado de um *ambiente de desenvolvimento e/ou testes* PHP com servidor web embutido.
-
+*Projetei essa imagem de modo que ela seja leve, flexível e versátil no contexto de ambientes de desenvolvimento, ou seja, você NÃO DEVE em hipótese alguma utilizar essa imagem em ambientes produtivos ou pré-produção.*
 
 As palavras-chave "DEVE", "NÃO DEVE", "REQUER", "DEVERIA", "NÃO DEVERIA", "PODERIA", "NÃO PODERIA", "RECOMENDÁVEL", "PODE", e "OPCIONAL" presentes em qualquer parte deste repositório devem ser interpretadas como descritas no [RFC 2119](http://tools.ietf.org/html/rfc2119). Tradução livre [RFC 2119 pt-br](http://rfc.pt.webiwg.org/rfc2119).
 
 ## :link: Imagens disponíveis
 
-Consulte a guia [Tags](https://hub.docker.com/r/fabiojanio/) no repositório deste projeto no **Docker Hub** para ter acesso a outras versões.
+Caso deseje utilizar essa mesma abordagem mas com outra versão do PHP, consulte meu catalogo de [Tags](https://hub.docker.com/r/fabiojanio/php/tags) no Docker Hub.
 
 ## :white_check_mark: Componentes principais
 
- - PHP 7.4.*
- - Composer
- - (pacote) hirak/prestissimo
+ - PHP 8.0.*
+ - Composer 2.*
  - curl
  - unzip
 
@@ -30,12 +28,12 @@ Consulte a guia [Tags](https://hub.docker.com/r/fabiojanio/) no repositório des
 
 Lista de módulos ativos presentes na imagem:
 
+- bcmath
 - Core
 - ctype
 - curl
 - date
 - dom
-- exif
 - fileinfo
 - filter
 - ftp
@@ -46,7 +44,6 @@ Lista de módulos ativos presentes na imagem:
 - json
 - libxml
 - mbstring
-- mysqli
 - mysqlnd
 - openssl
 - pcre
@@ -54,15 +51,12 @@ Lista de módulos ativos presentes na imagem:
 - pdo_mysql
 - pdo_pgsql
 - pdo_sqlite
-- pgsql
 - Phar
 - posix
 - readline
 - Reflection
 - session
 - SimpleXML
-- soap
-- sockets
 - sodium
 - SPL
 - sqlite3
@@ -71,14 +65,12 @@ Lista de módulos ativos presentes na imagem:
 - xml
 - xmlreader
 - xmlwriter
-- Zend OPcache
 - zlib
-- zip
 
-## :exclamation: Considerações relevantes
+## :exclamation: Pontos de atenção
 
  - Porta **80** exposta
- - **php.ini** enxuto e alocado em `/usr/local/etc/php/php.ini`
+ - **php.ini** de desenvolvimento alocado em `/usr/local/etc/php/php.ini`
 
 **Sugestão**: utilize como exemplo o [**docker-compose.yml**](https://github.com/docker-sources/php/blob/master/docker-compose.yml) para simplificar o start de um ambiente. Este contêiner utiliza "America/Sao_Paulo" como timezone default.
 
@@ -87,15 +79,15 @@ Lista de módulos ativos presentes na imagem:
 Execute essa instrução para montar um volume compartilhado entre *host* e *container*:
 
 ```
-docker run --name nome_do_container -v $(pwd):/app -d -p 80:80 fabiojanio/php:7.4-alpine
+docker run --name nome_do_container -v $(pwd):/app -d -p 80:80 --user www-data fabiojanio/php:8.0-alpine3.14
 ```
 
-**Obs**: no lugar de */projeto* você DEVE informar o caminho absoluto do diretório a ser compartilhado com o container. Observe que por que utilizei `$(pwd)` para capturar o caminho absoluto até o diretório corrente.
+**Obs**: no exemplo acima optei por utilizar o `$(pwd)` para capturar o caminho absoluto. Note ainda que fiz uso `--user` para subir o container utilizando um usuário não ROOT, isso não é obrigatório, porém, é mais seguro.
 
-Caso seu *document root* sejá diferente de `/app`, por exemplo, no Laravel o *document root* tem que apontar para o diretório `public`, neste caso você PODE fazer assim:
+Por padrão essa imagem considera o `/app` como seu *document root*. Vamos supor que você instalou o Laravel, este por sua vez considera o subdiretório `/public` como seu *document root*, neste caso PODEMOS contornar este problema de forma muito simples. Veja:
 
 ```
-docker run --name nome_do_container -d -v $(pwd):/app -p 80:80 fabiojanio/php:7.4-alpine php -S 0.0.0.0:80 -t /app/public
+docker run --name nome_do_container -d -v $(pwd):/app -p 80:80 --user www-data fabiojanio/php:8.0-alpine3.14 php -S 0.0.0.0:80 -t /app/public
 ```
 
 Após a criação do container é possível se conectar a ele desta forma:
@@ -109,14 +101,16 @@ docker exec -it nome_do_container sh
 Para subir um container temporário com a finalidade de criar um projeto via Composer, como por exemplo um projeto Laravel, basta executar:
 
 ```
-docker run --rm -v $(pwd):/app fabiojanio/php:7.4-alpine composer create-project --prefer-dist laravel/laravel blog
+docker run --rm -v $(pwd):/app --user www-data fabiojanio/php:8.0-alpine3.14 composer create-project --prefer-dist laravel/laravel blog
 ```
 
-Neste exemplo, caso queira subir o servidor embutido do PHP via Laravel Artisan, bastaria executar:
+Neste exemplo, caso queira subir o servidor embutido do PHP utilizando Laravel Artisan, bastaria executar:
 
 ```
-docker run -d --name nome_do_container -v $(pwd):/app -p 80:8000 fabiojanio/php:7.4-alpine php artisan serve --host=0.0.0.0
+docker run -d --name nome_do_container -v $(pwd):/app -p 80:8000 --user www-data fabiojanio/php:8.0-alpine3.14 php artisan serve --host=0.0.0.0
 ```
+
+> Para maior agilidade e comodidade consulte o [**docker-compose.yml**](https://github.com/docker-sources/php/blob/master/docker-compose.yml) que deixei de exemplo para você. Observe que você pode sobrescrever a propriedade `command` de modo a executar N tarefas no start do container, bem como substituir ou adicionar definições para outros containers. Boa diversão :)
 
 ## :page_with_curl: Licença MIT
 
