@@ -79,7 +79,13 @@ Lista de módulos ativos presentes na imagem:
 Execute essa instrução para montar um volume compartilhado entre *host* e *container*:
 
 ```
-docker run --name nome_do_container -v $(pwd):/app -d -p 80:80 --user www-data fabiojanio/php:8.0-alpine3.14
+docker run \
+	--name nome_do_container \
+	-d \
+	-v $(pwd):/app \
+	-p 80:80 \
+	--user www-data \
+	fabiojanio/php:8.0-alpine3.14
 ```
 
 **Obs**: no exemplo acima optei por utilizar o `$(pwd)` para capturar o caminho absoluto. Note ainda que fiz uso `--user` para subir o container utilizando um usuário não ROOT, isso não é obrigatório, porém, é mais seguro.
@@ -87,7 +93,13 @@ docker run --name nome_do_container -v $(pwd):/app -d -p 80:80 --user www-data f
 Por padrão essa imagem considera o `/app` como seu *document root*. Vamos supor que você instalou o Laravel, este por sua vez considera o subdiretório `/public` como seu *document root*, neste caso PODEMOS contornar este problema de forma muito simples. Veja:
 
 ```
-docker run --name nome_do_container -d -v $(pwd):/app -p 80:80 --user www-data fabiojanio/php:8.0-alpine3.14 php -S 0.0.0.0:80 -t /app/public
+docker run \
+	--name nome_do_container \
+	-d \
+	-v $(pwd):/app \
+	-p 80:80 \
+	-user www-data \
+	fabiojanio/php:8.0-alpine3.14 php -S 0.0.0.0:80 -t /app/public
 ```
 
 Após a criação do container é possível se conectar a ele desta forma:
@@ -104,34 +116,64 @@ Os exemplos abaixo representam algumas das possibilidades e facilidades providas
 
 Para baixar e instalar o Laravel Framework:
 ```
-docker run --rm -v $(pwd):/app fabiojanio/php:8.0-alpine3.14 composer create-project --prefer-dist laravel/laravel laravel_example
+docker run \
+	--rm \
+	-v $(pwd):/app \
+	fabiojanio/php:8.0-alpine3.14 composer create-project --prefer-dist laravel/laravel laravel_example
 ```
 
 Para baixar e instalar o Yii Framework:
 ```
-docker run --rm --name php -v $(pwd):/app fabiojanio/php:8.0-alpine3.14 composer create-project --prefer-dist yiisoft/yii2-app-basic yii_example
+docker run \
+	--rm \
+	-v $(pwd):/app \
+	fabiojanio/php:8.0-alpine3.14 composer create-project --prefer-dist yiisoft/yii2-app-basic yii_example
 ```
 
 #### :arrow_forward: Executar projeto/código PHP
 
 Para subir o Laravel Framework:
 ```
-docker run -d --name nome_do_container -v $(pwd):/app -p 8080:80 --user www-data fabiojanio/php:8.0-alpine3.14 php artisan serve --host=0.0.0.0 --port 80
+docker run \
+	--name nome_do_container \
+	-d \
+	-v $(pwd):/app \
+	-p 8080:80 \
+	--user www-data \
+	fabiojanio/php:8.0-alpine3.14 php artisan serve --host=0.0.0.0 --port 80
 ```
 
 Para subir o Yii Framework:
 ```
-docker run -d --name nome_do_container -v $(pwd):/app -p 8080:80 --user www-data fabiojanio/php:8.0-alpine3.14 php yii serve 0.0.0.0:80
+docker run \
+	--name nome_do_container \
+	-d \
+	-v $(pwd):/app \
+	-p 8080:80 \
+	--user www-data \
+	fabiojanio/php:8.0-alpine3.14 php yii serve 0.0.0.0:80
 ```
 
 Caso você tenha um index.php na raiz do seu projeto, basta executar:
 ```
-docker run -d --name nome_do_container -v $(pwd):/app -p 8080:80 --user www-data fabiojanio/php:8.0-alpine3.14
+docker run \
+	--name nome_do_container \
+	-d \
+	-v $(pwd):/app \
+	-p 8080:80 \
+	--user www-data \
+	fabiojanio/php:8.0-alpine3.14
 ```
 
 Caso seu *Document Root* for um subdiretório, exemplo /minha_app/public, você pode fazer assim:
 ```
-docker run -d --name nome_do_container -v $(pwd):/app -p 8080:80 --user www-data fabiojanio/php:8.0-alpine3.14 php -S 0.0.0.0:80 -t /app/public
+docker run \
+	--name nome_do_container \
+	-d \
+	-v $(pwd):/app \
+	-p 8080:80 \
+	--user www-data \
+	fabiojanio/php:8.0-alpine3.14 php -S 0.0.0.0:80 -t /app/public
 ```
 
 ## :tada: Dica
