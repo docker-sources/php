@@ -24,6 +24,29 @@ services:
       retries: 30
       start_period: 5s
 
+  # Se preferir usar Postgres, tudo que terá que fazer é remover o
+  # bloco de definição do MySQL e descomentar este aqui:
+  # db:
+  #   container_name: postgres
+  #   image: postgres:13.3-alpine
+  #   environment:
+  #     POSTGRES_DB: my_app
+  #     POSTGRES_USER: app_user
+  #     POSTGRES_PASSWORD: secret-pw
+  #   restart: on-failure
+  #   user: postgres
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - db-data:/var/lib/mysql
+  #   networks:
+  #     - db_network
+  #   healthcheck:
+  #     test: pg_isready -U postgres
+  #     interval: 1s
+  #     timeout: 15s
+  #     retries: 20
+
   php:
     container_name: php
     image: fabiojanio/php:8.0-alpine3.14
@@ -43,6 +66,11 @@ services:
     command: >
       sh -c "php artisan migrate
       && php artisan serve --host=0.0.0.0 --port=80"
+    # Veja outro exemplo, só que desta vez rodando as migrations e o servidor
+    # web embutido do Yii Framework:
+    # command: >
+    #   sh -c "php yii migrate/up --interactive 0
+    #   && php yii serve 0.0.0.0:80"
 
 volumes:
   db-data:
