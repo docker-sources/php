@@ -5,34 +5,36 @@ services:
     container_name: mysql
     image: mysql:8.0
     environment:
-      - MYSQL_DATABASE="my_app"
-      - MYSQL_USER="app_user"
-      - MYSQL_PASSWORD="secret-pw"
-      - MYSQL_ROOT_PASSWORD="secret-pw"
+      MYSQL_DATABASE: my_app
+      MYSQL_USER: app_user
+      MYSQL_PASSWORD: secret-pw
+      MYSQL_ROOT_PASSWORD: secret-pw
     restart: on-failure
     user: mysql
     ports:
-      - 3306:3306
+      - "3306:3306"
     volumes:
       - db-data:/var/lib/mysql
     networks:
       - db_network
     healthcheck:
-      test: "mysqladmin -u root -p'$MYSQL_ROOT_PASSWORD' ping -h localhost"
-      interval: 5s
-      retries: 5
+      test: mysqladmin -u root -p'$$MYSQL_ROOT_PASSWORD' ping -h localhost
+      interval: 1s
+      timeout: 40s
+      retries: 30
+      start_period: 5s
 
   php:
     container_name: php
     image: fabiojanio/php:8.0-alpine3.14
     volumes:
-      - /your/project:/app
+      - /your/project/here:/app
       #- ./config/php.ini:/usr/local/etc/php
     working_dir: /app
     restart: on-failure
     user: www-data
     ports:
-      - 8080:80
+      - "8080:80"
     depends_on:
       db:
         condition: service_healthy
