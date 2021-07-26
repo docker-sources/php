@@ -98,19 +98,45 @@ docker exec -it nome_do_container sh
 
 ### :bulb: Outros exemplos de uso
 
-Para subir um container temporário com a finalidade de criar um projeto via Composer, como por exemplo um projeto Laravel, basta executar:
+Os exemplos abaixo representam algumas das possibilidades e facilidades providas por essa imagem.
 
-```
-docker run --rm -v $(pwd):/app --user www-data fabiojanio/php:8.0-alpine3.14 composer create-project --prefer-dist laravel/laravel blog
-```
+#### :cloud: Baixando e instalando Projetos
 
-Neste exemplo, caso queira subir o servidor embutido do PHP utilizando Laravel Artisan, bastaria executar:
-
+Para baixar e instalar o Laravel Framework:
 ```
-docker run -d --name nome_do_container -v $(pwd):/app -p 80:8000 --user www-data fabiojanio/php:8.0-alpine3.14 php artisan serve --host=0.0.0.0
+docker run --rm -v $(pwd):/app fabiojanio/php:8.0-alpine3.14 composer create-project --prefer-dist laravel/laravel laravel_example
 ```
 
-> Para maior agilidade e comodidade consulte o [**docker-compose.yml**](https://github.com/docker-sources/php/blob/master/docker-compose.yml) que deixei de exemplo para você. Observe que você pode sobrescrever a propriedade `command` de modo a executar N tarefas no start do container, bem como substituir ou adicionar definições para outros containers. Boa diversão :)
+Para baixar e instalar o Yii Framework:
+```
+docker run --rm --name php -v $(pwd):/app fabiojanio/php:8.0-alpine3.14 composer create-project --prefer-dist yiisoft/yii2-app-basic yii_example
+```
+
+#### :arrow_forward: Executar projeto/código PHP
+
+Para subir o Laravel Framework:
+```
+docker run -d --name nome_do_container -v $(pwd):/app -p 8080:80 --user www-data fabiojanio/php:8.0-alpine3.14 php artisan serve --host=0.0.0.0 --port 80
+```
+
+Para subir o Yii Framework:
+```
+docker run -d --name nome_do_container -v $(pwd):/app -p 8080:80 --user www-data fabiojanio/php:8.0-alpine3.14 php yii serve 0.0.0.0:80
+```
+
+Caso você tenha um index.php na raiz do seu projeto, basta executar:
+```
+docker run -d --name nome_do_container -v $(pwd):/app -p 8080:80 --user www-data fabiojanio/php:8.0-alpine3.14
+```
+
+Caso seu *Document Root* for um subdiretório, exemplo /minha_app/public, você pode fazer assim:
+```
+docker run -d --name nome_do_container -v $(pwd):/app -p 8080:80 --user www-data fabiojanio/php:8.0-alpine3.14 php -S 0.0.0.0:80 -t /app/public
+```
+
+## :tada: Dica
+
+Para maior agilidade e comodidade consulte o [**docker-compose.yml**](https://github.com/docker-sources/php/blob/master/docker-compose.yml) que deixei de exemplo para você. Observe que você pode sobrescrever a propriedade `command` de modo a executar N tarefas no start do container, bem como substituir ou adicionar definições para outros containers. Boa diversão :)
 
 ## :page_with_curl: Licença MIT
 
