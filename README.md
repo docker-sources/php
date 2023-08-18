@@ -1,4 +1,4 @@
-# php:8.1-alpine3.16
+# php:8.2-alpine3.18
 
 <p align="center">
 	<img alt="logo-docker" class="avatar rounded-2" height="150" src="https://avatars2.githubusercontent.com/u/35675959?s=400&u=b1f9ebca6fa8e5be55cb524e16f38b52f2f1dd58&v=4" width="160">
@@ -19,7 +19,7 @@ Caso deseje utilizar essa mesma abordagem mas com outra versão do PHP, consulte
 
 ## :white_check_mark: Componentes principais
 
- - PHP 8.1.*
+ - PHP 8.2.*
  - Composer 2.*
  - curl
  - unzip
@@ -85,7 +85,7 @@ docker run \
 	-v $(pwd):/app \
 	-p 80:80 \
 	--user www-data \
-	fabiojanio/php:8.1-alpine3.16
+	fabiojanio/php:8.2-alpine3.18
 ```
 
 **Obs**: no exemplo acima optei por utilizar o `$(pwd)` para capturar o caminho absoluto. Note ainda que fiz uso `--user` para subir o container utilizando um usuário não ROOT, isso não é obrigatório, porém, é mais seguro.
@@ -99,7 +99,7 @@ docker run \
 	-v $(pwd):/app \
 	-p 80:80 \
 	--user www-data \
-	fabiojanio/php:8.1-alpine3.16 php -S 0.0.0.0:80 -t /app/public
+	fabiojanio/php:8.2-alpine3.18 php -S 0.0.0.0:80 -t /app/public
 ```
 
 Após a criação do container é possível se conectar a ele desta forma:
@@ -119,7 +119,8 @@ Para baixar e instalar o Laravel Framework:
 docker run \
 	--rm \
 	-v $(pwd):/app \
-	fabiojanio/php:8.1-alpine3.16 composer create-project --prefer-dist laravel/laravel laravel_example
+  --user $(id -u) \
+	fabiojanio/php:8.2-alpine3.18 composer create-project --prefer-dist laravel/laravel laravel_example
 ```
 
 Para baixar e instalar o Yii Framework:
@@ -127,7 +128,8 @@ Para baixar e instalar o Yii Framework:
 docker run \
 	--rm \
 	-v $(pwd):/app \
-	fabiojanio/php:8.1-alpine3.16 composer create-project --prefer-dist yiisoft/yii2-app-basic yii_example
+  --user $(id -u) \
+	fabiojanio/php:8.2-alpine3.18 composer create-project --prefer-dist yiisoft/yii2-app-basic yii_example
 ```
 
 #### :arrow_forward: Executar projeto/código PHP
@@ -140,7 +142,7 @@ docker run \
 	-v $(pwd):/app \
 	-p 8080:80 \
 	--user www-data \
-	fabiojanio/php:8.1-alpine3.16 php artisan serve --host=0.0.0.0 --port 80
+	fabiojanio/php:8.2-alpine3.18 php artisan serve --host=0.0.0.0 --port 80
 ```
 
 Para subir o Yii Framework:
@@ -151,7 +153,7 @@ docker run \
 	-v $(pwd):/app \
 	-p 8080:80 \
 	--user www-data \
-	fabiojanio/php:8.1-alpine3.16 php yii serve 0.0.0.0:80
+	fabiojanio/php:8.2-alpine3.18 php yii serve 0.0.0.0:80
 ```
 
 Caso você tenha um index.php na raiz do seu projeto, basta executar:
@@ -162,7 +164,7 @@ docker run \
 	-v $(pwd):/app \
 	-p 8080:80 \
 	--user www-data \
-	fabiojanio/php:8.1-alpine3.16
+	fabiojanio/php:8.2-alpine3.18
 ```
 
 Caso seu *Document Root* for um subdiretório, exemplo /minha_app/public, você pode fazer assim:
@@ -173,7 +175,7 @@ docker run \
 	-v $(pwd):/app \
 	-p 8080:80 \
 	--user www-data \
-	fabiojanio/php:8.1-alpine3.16 php -S 0.0.0.0:80 -t /app/public
+	fabiojanio/php:8.2-alpine3.18 php -S 0.0.0.0:80 -t /app/public
 ```
 
 ## :tada: Dica

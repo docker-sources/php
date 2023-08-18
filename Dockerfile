@@ -1,4 +1,4 @@
-FROM php:8.1-cli-alpine3.16
+FROM php:8.2-cli-alpine3.18
 
 LABEL com.fabiojanio.image.authors.name="Fabio J L Ferreira"
 LABEL com.fabiojanio.image.authors.email="fabiojaniolima@gmail.com"

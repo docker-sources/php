@@ -7,7 +7,7 @@ branches:
 
 env:
   global:
-    - VERSION=8.1 VARIANT=alpine3.16
+    - VERSION=8.2 VARIANT=alpine3.18
 
 before_script:
   - env | sort
