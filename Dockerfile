@@ -1,7 +1,7 @@
 FROM php:8.4-cli-alpine3.22
 
-LABEL com.fabiojanio.docker.authors.name="Fabio J L Ferreira"
-LABEL com.fabiojanio.docker.authors.email="fabiojaniolima@gmail.com"
+LABEL com.fabiojanio.docker.authors.name="Fábio Jânio Lima Ferreira"
+LABEL com.fabiojanio.docker.authors.email="contato@fabiojanio.com"
 
 ##----------------------------------##
 ## Instalações e configurações base ##
