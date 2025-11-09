@@ -1,15 +1,14 @@
-FROM php:8.2-cli-alpine3.18
+FROM php:8.4-cli-alpine3.22
 
-LABEL com.fabiojanio.image.authors.name="Fabio J L Ferreira"
-LABEL com.fabiojanio.image.authors.email="fabiojaniolima@gmail.com"
+LABEL com.fabiojanio.docker.authors.name="Fabio J L Ferreira"
+LABEL com.fabiojanio.docker.authors.email="fabiojaniolima@gmail.com"
 
 ##----------------------------------##
 ## Instalações e configurações base ##
 ##----------------------------------##
 
-# Instala o composer e pacote para paralelismo
 RUN set -eux; \
-    ln -s /var/www/html /app  && \
+    ln -s /var/www/html /app && \
     \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer && \
     \
@@ -22,6 +21,15 @@ RUN set -eux; \
 ##------------------##
 ## Extensões do PHP ##
 ##------------------##
+
+RUN apk add --no-cache --virtual .fetch-deps autoconf \
+        automake \
+        build-base \
+        libtool \
+        linux-headers && \
+    pecl install xdebug && \
+    docker-php-ext-enable xdebug && \
+    apk del --no-network .fetch-deps
 
 # Dependências para compilação das extensões
 RUN set -eux; \
@@ -50,7 +58,15 @@ RUN set -eux; \
         \
         apk del --no-network .build-deps
 
-COPY config/php.ini /usr/local/etc/php
+COPY ./config/php.ini /usr/local/etc/php/
+
+RUN echo "xdebug.mode=develop,coverage,debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
+    echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
+    echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
+    echo "xdebug.client_port=9003" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
+    echo "xdebug.idekey=DOCKER" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
+    echo "xdebug.log=/dev/stdout" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
+    echo "xdebug.log_level=0" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 WORKDIR /app
 
