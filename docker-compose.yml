@@ -49,7 +49,7 @@ services:
 
   php:
     container_name: php
-    image: fabiojanio/php:8.2-alpine3.18
+    image: fabiojanio/php:8.4-cli-alpine3.22
     volumes:
       - /your/project/here:/app
       #- ./config/php.ini:/usr/local/etc/php
