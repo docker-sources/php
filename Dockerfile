@@ -9,10 +9,7 @@ LABEL com.fabiojanio.docker.authors.email="fabiojaniolima@gmail.com"
 
 RUN set -eux; \
     ln -s /var/www/html /app && \
-    \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer && \
-    \
-    # Instala e configura timezone
     apk add --no-cache --virtual .fetch-deps tzdata && \
     cp /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime && \
     echo "America/Sao_Paulo" > /etc/timezone && \
@@ -22,7 +19,9 @@ RUN set -eux; \
 ## Extensões do PHP ##
 ##------------------##
 
-RUN apk add --no-cache --virtual .fetch-deps autoconf \
+# Xdebug
+RUN apk add --no-cache --virtual .fetch-deps \
+        autoconf \
         automake \
         build-base \
         libtool \
@@ -31,42 +30,45 @@ RUN apk add --no-cache --virtual .fetch-deps autoconf \
     docker-php-ext-enable xdebug && \
     apk del --no-network .fetch-deps
 
-# Dependências para compilação das extensões
+# Extensões principais e suas dependências
 RUN set -eux; \
     apk add --no-cache --virtual .build-deps \
-            $PHPIZE_DEPS \
-            freetype-dev \
-            postgresql-dev && \
-        \
-        docker-php-ext-configure gd --with-freetype && \
-        docker-php-ext-configure pdo_pgsql --with-pdo-pgsql && \
-        \
-        docker-php-ext-install -j$(nproc) \
-            gd \
-            intl \
-            bcmath \
-            pdo_mysql \
-            pdo_pgsql && \
-        \
-        runDeps="$( \
-            scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
-                | tr ',' '\n' \
-                | sort -u \
-                | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
-        )" && \
-        apk add --no-cache $runDeps && \
-        \
-        apk del --no-network .build-deps
+        $PHPIZE_DEPS \
+        freetype-dev \
+        postgresql-dev && \
+    docker-php-ext-configure gd --with-freetype && \
+    docker-php-ext-configure pdo_pgsql --with-pdo-pgsql && \
+    docker-php-ext-install -j$(nproc) \
+        gd \
+        intl \
+        bcmath \
+        pdo_mysql \
+        pdo_pgsql && \
+    runDeps="$( \
+        scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
+            | tr ',' '\n' \
+            | sort -u \
+            | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
+    )" && \
+    apk add --no-cache $runDeps && \
+    apk del --no-network .build-deps
+
+##-------------------------##
+## Configurações do PHP     ##
+##-------------------------##
 
 COPY ./config/php.ini /usr/local/etc/php/
 
-RUN echo "xdebug.mode=develop,coverage,debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
-    echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
-    echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
-    echo "xdebug.client_port=9003" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
-    echo "xdebug.idekey=DOCKER" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
-    echo "xdebug.log=/dev/stdout" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
-    echo "xdebug.log_level=0" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+# Configuração do Xdebug
+RUN { \
+        echo "xdebug.mode=develop,coverage,debug"; \
+        echo "xdebug.start_with_request=yes"; \
+        echo "xdebug.client_host=host.docker.internal"; \
+        echo "xdebug.client_port=9003"; \
+        echo "xdebug.idekey=DOCKER"; \
+        echo "xdebug.log=/dev/stdout"; \
+        echo "xdebug.log_level=0"; \
+    } >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 WORKDIR /app
 
