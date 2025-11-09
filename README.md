@@ -112,7 +112,7 @@ Para baixar e instalar o Laravel Framework:
 docker run \
 	--rm \
 	-v $(pwd):/app \
-  	--user $(id -u) \
+  --user $(id -u) \
 	fabiojanio/php:8.4-cli-alpine3.22 composer create-project --prefer-dist laravel/laravel laravel_example
 ```
 
@@ -121,7 +121,7 @@ Para baixar e instalar o Yii Framework:
 docker run \
 	--rm \
 	-v $(pwd):/app \
-  	--user $(id -u) \
+  --user $(id -u) \
 	fabiojanio/php:8.4-cli-alpine3.22 composer create-project --prefer-dist yiisoft/yii2-app-basic yii_example
 ```
 
