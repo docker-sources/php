@@ -10,10 +10,10 @@ Caso deseje utilizar essa mesma abordagem mas com outra versão do PHP, consulte
 
 ## :white_check_mark: Componentes principais
 
- - PHP 8.4.*
- - Composer 2.*
- - curl
- - unzip
+- PHP 8.4.*
+- Composer 2.*
+- curl
+- unzip
 
 ## :white_check_mark: Módulos PHP ativos
 
@@ -62,8 +62,8 @@ Lista de módulos ativos presentes na imagem:
 
 ## :exclamation: Pontos de atenção
 
- - Porta **80** exposta
- - **php.ini** de desenvolvimento alocado em `/usr/local/etc/php/php.ini`
+- Porta **80** exposta
+- **php.ini** de desenvolvimento alocado em `/usr/local/etc/php/php.ini`
 
 **Sugestão**: utilize como exemplo o [**docker-compose.yml**](https://github.com/docker-sources/php/blob/master/docker-compose.yml) para simplificar o start de um ambiente. Este contêiner utiliza "America/Sao_Paulo" como timezone default.
 
@@ -71,33 +71,33 @@ Lista de módulos ativos presentes na imagem:
 
 Execute essa instrução para montar um volume compartilhado entre *host* e *container*:
 
-```
+```bash
 docker run \
-	--name nome_do_container \
-	-d \
-	-v $(pwd):/app \
-	-p 80:80 \
-	--user www-data \
-	fabiojanio/php:8.4-cli-alpine3.22
+  --name nome_do_container \
+  -d \
+  -v $(pwd):/app \
+  -p 80:80 \
+  --user www-data \
+  fabiojanio/php:8.4-cli-alpine3.22
 ```
 
 **Obs**: no exemplo acima optei por utilizar o `$(pwd)` para capturar o caminho absoluto. Note ainda que fiz uso `--user` para subir o container utilizando um usuário não ROOT, isso não é obrigatório, porém, é mais seguro.
 
 Por padrão essa imagem considera o `/app` como seu *document root*. Vamos supor que você instalou o Laravel, este por sua vez considera o subdiretório `/public` como seu *document root*, neste caso PODEMOS contornar este problema de forma muito simples. Veja:
 
-```
+```bash
 docker run \
-	--name nome_do_container \
-	-d \
-	-v $(pwd):/app \
-	-p 80:80 \
-	--user www-data \
-	fabiojanio/php:8.4-cli-alpine3.22 php -S 0.0.0.0:80 -t /app/public
+  --name nome_do_container \
+  -d \
+  -v $(pwd):/app \
+  -p 80:80 \
+  --user www-data \
+  fabiojanio/php:8.4-cli-alpine3.22 php -S 0.0.0.0:80 -t /app/public
 ```
 
 Após a criação do container é possível se conectar a ele desta forma:
 
-```
+```bash
 docker exec -it nome_do_container sh
 ```
 
@@ -108,67 +108,73 @@ Os exemplos abaixo representam algumas das possibilidades e facilidades providas
 #### :cloud: Baixando e instalando Projetos
 
 Para baixar e instalar o Laravel Framework:
-```
+
+```bash
 docker run \
-	--rm \
-	-v $(pwd):/app \
+  --rm \
+  -v $(pwd):/app \
   --user $(id -u) \
-	fabiojanio/php:8.4-cli-alpine3.22 composer create-project --prefer-dist laravel/laravel laravel_example
+  fabiojanio/php:8.4-cli-alpine3.22 composer create-project --prefer-dist laravel/laravel laravel_example
 ```
 
 Para baixar e instalar o Yii Framework:
-```
+
+```bash
 docker run \
-	--rm \
-	-v $(pwd):/app \
+  --rm \
+  -v $(pwd):/app \
   --user $(id -u) \
-	fabiojanio/php:8.4-cli-alpine3.22 composer create-project --prefer-dist yiisoft/yii2-app-basic yii_example
+  fabiojanio/php:8.4-cli-alpine3.22 composer create-project --prefer-dist yiisoft/yii2-app-basic yii_example
 ```
 
 #### :arrow_forward: Executar projeto/código PHP
 
 Para subir o Laravel Framework:
-```
+
+```bash
 docker run \
-	--name nome_do_container \
-	-d \
-	-v $(pwd):/app \
-	-p 8080:80 \
-	--user www-data \
-	fabiojanio/php:8.4-cli-alpine3.22 php artisan serve --host=0.0.0.0 --port 80
+  --name nome_do_container \
+  -d \
+  -v $(pwd):/app \
+  -p 8080:80 \
+  --user www-data \
+  fabiojanio/php:8.4-cli-alpine3.22 php artisan serve --host=0.0.0.0 --port 80
 ```
 
 Para subir o Yii Framework:
-```
+
+```bash
 docker run \
-	--name nome_do_container \
-	-d \
-	-v $(pwd):/app \
-	-p 8080:80 \
-	--user www-data \
-	fabiojanio/php:8.4-cli-alpine3.22 php yii serve 0.0.0.0:80
+  --name nome_do_container \
+  -d \
+  -v $(pwd):/app \
+  -p 8080:80 \
+  --user www-data \
+  fabiojanio/php:8.4-cli-alpine3.22 php yii serve 0.0.0.0:80
 ```
 
 Caso você tenha um index.php na raiz do seu projeto, basta executar:
-```
+
+```bash
 docker run \
-	--name nome_do_container \
-	-d \
-	-v $(pwd):/app \
-	-p 8080:80 \
-	--user www-data \
-	fabiojanio/php:8.4-cli-alpine3.22
+  --name nome_do_container \
+  -d \
+  -v $(pwd):/app \
+  -p 8080:80 \
+  --user www-data \
+  fabiojanio/php:8.4-cli-alpine3.22
 ```
 
 Caso seu *Document Root* for um subdiretório, exemplo /minha_app/public, você pode fazer assim:
-```
+
+```bash
 docker run \
-	--name nome_do_container \
-	-d \
-	-v $(pwd):/app \
-	-p 8080:80 \
-	--user www-data \
-	fabiojanio/php:8.4-cli-alpine3.22 php -S 0.0.0.0:80 -t /app/public
+  --name nome_do_container \
+  -d \
+  -v $(pwd):/app \
+  -p 8080:80 \
+  --user www-data \
+  fabiojanio/php:8.4-cli-alpine3.22 php -S 0.0.0.0:80 -t /app/public
 ```
 
 ## :tada: Dica
